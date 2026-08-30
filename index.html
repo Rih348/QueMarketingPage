@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="كلاودكيو | نظام إدارة الطوابير الذكي للمطاعم والمقاهي. ينضم ضيفك عبر رابط أو رمز QR بدون تطبيق، وتصله رسالة SMS عندما يحين دوره."/>
+  <meta name="theme-color" content="#0D1B2A"/>
+  <meta property="og:title" content="كلاودكيو | وداعًا للإدارة اليدوية، مرحبًا بالإدارة الذكية"/>
+  <meta property="og:description" content="ينضم ضيفك إلى الطابور عبر رابط، ويصله إشعار عندما يحين دوره، ويدير طاقمك الطابور من شاشة واحدة."/>
+  <meta property="og:type" content="website"/>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230D1B2A'/%3E%3Cpath d='M32 12c2.9 21.9 10.1 29.1 32 32-21.9 2.9-29.1 10.1-32 32-2.9-21.9-10.1-29.1-32-32 21.9-2.9 29.1-10.1 32-32z' transform='scale(.62) translate(19 19)' fill='%23FF5C35'/%3E%3C/svg%3E"/>
+  <title>كلاودكيو | إدارة ذكية لطوابير الانتظار</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --ink:#070E17;
+      --navy:#0D1B2A;
+      --navy-2:#112232;
+      --navy-3:#16293C;
+      --coral:#FF5C35;
+      --coral-2:#FF8A3D;
+      --coral-deep:#C1500F;
+      --gold:#F4A623;
+      --cream:#FFF8F4;
+      --green:#10B981;
+      --tx:#FFFFFF;
+      --tx-2:rgba(255,255,255,.70);
+      --tx-3:rgba(255,255,255,.45);
+      --line:rgba(255,255,255,.10);
+      --line-2:rgba(255,255,255,.18);
+      --r-sm:12px;
+      --r-md:18px;
+      --r-lg:26px;
+      --shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth;overflow-x:hidden}
+    body{
+      font-family:'Noto Sans Arabic','Inter',system-ui,sans-serif;
+      background:var(--navy);
+      color:var(--tx);
+      line-height:1.75;
+      -webkit-font-smoothing:antialiased;
+      overflow-x:hidden;
+    }
+    body.lang-en{font-family:'Inter',system-ui,sans-serif}
+    a{text-decoration:none;color:inherit}
+    ul{list-style:none}
+    img,svg{display:block;max-width:100%}
+    .container{max-width:1180px;margin:0 auto;padding:0 28px;position:relative;z-index:2}
+    section,header.hero,footer{position:relative;overflow:hidden}
+    .section{padding:110px 0}
+    .section-tight{padding:80px 0}
+
+    /* ── decorative ─────────────────────────── */
+    .orb{position:absolute;border-radius:50%;pointer-events:none;z-index:0}
+    .orb-hero{
+      inset-block-start:-58%;inset-inline-start:-30%;
+      width:min(900px,110vw);aspect-ratio:1;
+      background:radial-gradient(circle at 50% 50%,#FF7A1A 0%,#A8460D 30%,rgba(13,27,42,0) 76%);
+      opacity:.34;filter:blur(10px);
+    }
+    .orb-soft{
+      width:min(720px,100vw);aspect-ratio:1;
+      background:radial-gradient(circle,rgba(255,92,53,.20) 0%,rgba(255,92,53,0) 68%);
+    }
+    .orb-gold{
+      width:min(620px,90vw);aspect-ratio:1;
+      background:radial-gradient(circle,rgba(244,166,35,.13) 0%,rgba(244,166,35,0) 68%);
+    }
+    .spark{width:26px;height:26px;fill:var(--coral);flex-shrink:0}
+    .sparks{display:flex;align-items:flex-end;gap:6px;margin-bottom:22px}
+    .sparks .spark:nth-child(2){width:15px;height:15px;opacity:.9}
+    .grain{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;
+      background:linear-gradient(180deg,rgba(255,255,255,.02) 0%,rgba(0,0,0,0) 30%)}
+
+    /* ── type ───────────────────────────────── */
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:9px;
+      color:var(--coral);font-size:13px;font-weight:800;letter-spacing:.6px;
+      margin-bottom:16px;text-transform:none;
+    }
+    .eyebrow::before{content:'';width:22px;height:2px;border-radius:2px;background:var(--coral)}
+    h1,h2,h3{font-weight:900;letter-spacing:-.2px;line-height:1.2;text-wrap:balance}
+    .h-xl{font-size:clamp(34px,4.9vw,58px);line-height:1.18;font-weight:800}
+    .h-lg{font-size:clamp(28px,4.2vw,50px);line-height:1.18}
+    .h-md{font-size:clamp(24px,3vw,36px)}
+    body.lang-en .h-xl{letter-spacing:-2px;line-height:1.05}
+    body.lang-en .h-lg{letter-spacing:-1.2px}
+    em{font-style:normal;color:var(--coral)}
+    .lead{color:var(--tx-2);font-size:clamp(16px,1.6vw,19px);line-height:1.9}
+    .section-head{max-width:720px;margin:0 auto 60px;text-align:center}
+    .section-head .eyebrow{margin-inline:auto}
+    .section-head p{color:var(--tx-2);font-size:17px;margin-top:16px;line-height:1.9}
+
+    /* ── buttons ────────────────────────────── */
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:9px;
+      font-family:inherit;font-weight:800;font-size:15.5px;
+      padding:16px 30px;border-radius:14px;border:none;cursor:pointer;
+      transition:transform .2s ease,background .2s ease,box-shadow .2s ease,border-color .2s ease;
+      white-space:nowrap;
+    }
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:linear-gradient(135deg,var(--coral-2),var(--coral));color:#fff;box-shadow:0 10px 30px rgba(255,92,53,.35)}
+    .btn-primary:hover{box-shadow:0 14px 36px rgba(255,92,53,.45)}
+    .btn-ghost{background:transparent;color:rgba(255,255,255,.82);border:1px solid rgba(255,255,255,.16)}
+    .btn-ghost:hover{background:rgba(255,255,255,.07);color:#fff;border-color:rgba(255,255,255,.3)}
+    .btn-lg{padding:18px 34px;font-size:16.5px}
+    .btn-sm{padding:12px 24px;font-size:14px;font-weight:700;border-radius:11px;box-shadow:0 8px 20px rgba(255,92,53,.26)}
+    .btn-sm.btn-primary:hover{box-shadow:0 11px 26px rgba(255,92,53,.34)}
+
+    /* ── navbar ─────────────────────────────── */
+    .navbar{position:sticky;top:0;z-index:100;transition:background .25s,border-color .25s,backdrop-filter .25s;
+      background:transparent;border-bottom:1px solid transparent}
+    .navbar.stuck{background:rgba(10,20,32,.86);backdrop-filter:blur(16px);border-bottom-color:var(--line)}
+    .navbar .container{display:flex;align-items:center;justify-content:space-between;height:76px;gap:18px}
+    .logo{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:900;letter-spacing:-.3px;flex-shrink:0}
+    .logo-accent{color:var(--coral)}
+    body:not(.lang-en) .logo .logo-accent{margin-inline-start:.13em}
+    .nav-links{display:flex;align-items:center;gap:30px}
+    .nav-links a{color:rgba(255,255,255,.72);font-size:14.5px;font-weight:700;transition:color .2s;white-space:nowrap;position:relative}
+    .nav-links a::after{content:'';position:absolute;inset-inline-start:0;bottom:-6px;width:0;height:2px;background:var(--coral);transition:width .25s}
+    .nav-links a:hover{color:#fff}
+    .nav-links a:hover::after{width:100%}
+    .nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .lang-btn{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:11px;
+      width:42px;height:42px;display:grid;place-items:center;cursor:pointer;transition:background .2s}
+    .lang-btn:hover{background:rgba(255,255,255,.13)}
+
+    /* ── hero ───────────────────────────────── */
+    .hero{padding:56px 0 76px;background:linear-gradient(180deg,var(--navy) 0%,var(--navy) 55%,#0F2030 100%)}
+    .hero .container{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center;text-align:start}
+    .hero h1{margin-bottom:24px;font-size:clamp(34px,4.9vw,60px);line-height:1.22}
+    body.lang-en .hero h1{font-size:clamp(29px,3.6vw,44px);line-height:1.14}
+    .hero .lead{font-size:17px;max-width:480px}
+    .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .hl{position:relative;display:inline-block;color:#fff;white-space:nowrap}
+    .hl::before{content:'';position:absolute;inset-inline:-.14em;bottom:.04em;height:.38em;
+      background:var(--coral);border-radius:5px;z-index:-1}
+
+    /* hero product composition */
+    .hero-visual{position:relative;display:flex;justify-content:center;align-items:center;min-height:600px}
+    .hero-visual .phone{width:312px;padding:13px;animation:floaty 7s ease-in-out infinite}
+    .lock-screen{background:linear-gradient(168deg,#2A3B50 0%,#101E2D 52%,#3E2617 100%);
+      border-radius:36px;padding:38px 15px 18px;aspect-ratio:9/16.4;display:flex;flex-direction:column}
+    .lock-time{text-align:center;color:#fff;font-family:'Inter',sans-serif;font-weight:800;
+      font-size:54px;letter-spacing:-1.8px;line-height:1}
+    .lock-date{text-align:center;color:rgba(255,255,255,.5);font-size:12px;margin:5px 0 auto;font-weight:600}
+    .notif{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.18);
+      border-radius:18px;padding:13px 15px;margin-bottom:10px;backdrop-filter:blur(10px)}
+    .notif-top{display:flex;align-items:center;gap:7px;margin-bottom:5px}
+    .notif-top i{width:19px;height:19px;border-radius:5px;background:var(--coral);display:grid;place-items:center;flex-shrink:0}
+    .notif-top i svg{width:10px;height:10px;fill:#fff}
+    .notif-top b{color:#fff;font-weight:800;font-size:11px}
+    .notif-top .t{margin-inline-start:auto;font-size:10.5px;color:rgba(255,255,255,.5);font-weight:600}
+    .notif h5{font-size:14.5px;font-weight:800;color:#fff;margin-bottom:3px;line-height:1.4}
+    .notif p{font-size:12px;color:rgba(255,255,255,.72);line-height:1.6}
+    .notif.dim{opacity:.4;transform:scale(.955);margin-bottom:0}
+    .lock-home{width:92px;height:4px;border-radius:2px;background:rgba(255,255,255,.32);margin:18px auto 0}
+    .float-chip{position:absolute;inset-block-start:56%;inset-inline-start:-13%;z-index:3;
+      background:#fff;color:var(--navy);border-radius:15px;padding:11px 15px;
+      display:flex;align-items:center;gap:10px;box-shadow:0 20px 44px rgba(0,0,0,.5);
+      font-size:12.5px;font-weight:800;white-space:nowrap;animation:floaty 5.5s ease-in-out .9s infinite}
+    .float-chip .ok{width:24px;height:24px;border-radius:50%;flex-shrink:0;
+      background:rgba(16,185,129,.16);color:#047857;display:grid;place-items:center;font-size:12px}
+    .shape{position:absolute;pointer-events:none}
+    .sh-dots{inset-block-start:4%;inset-inline-end:8%;width:58px;height:58px;
+      background-image:radial-gradient(var(--coral) 2.3px,transparent 2.4px);background-size:14px 14px;opacity:.65}
+    .sh-ring{inset-block-end:8%;inset-inline-end:4%;width:104px;height:104px;
+      border:2px solid rgba(244,166,35,.32);border-radius:50%}
+    .sh-dot{inset-block-end:26%;inset-inline-start:6%;width:13px;height:13px;border-radius:50%;background:var(--coral)}
+    .sh-spark{inset-block-start:1%;inset-inline-start:16%}
+    .sh-spark svg{width:30px;height:30px;fill:var(--coral)}
+    .sh-spark2{inset-block-end:2%;inset-inline-start:30%}
+    .sh-spark2 svg{width:17px;height:17px;fill:var(--gold)}
+    @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+    @media (prefers-reduced-motion:reduce){.hero-visual .phone,.float-chip{animation:none}}
+
+    /* ── generic card ───────────────────────── */
+    .card{
+      background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
+      border:1px solid var(--line);border-radius:var(--r-lg);padding:32px;
+      transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease;position:relative;overflow:hidden;
+    }
+    .card::after{content:'';position:absolute;inset-inline:0;bottom:0;height:120px;
+      background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,255,255,.05));pointer-events:none}
+    .card:hover{transform:translateY(-5px);border-color:rgba(255,92,53,.38);box-shadow:0 20px 44px rgba(0,0,0,.35)}
+    .card h3{font-size:19px;margin-bottom:10px;line-height:1.4}
+    .card p{color:var(--tx-2);font-size:14.5px;line-height:1.85}
+    .card-num{font-family:'Inter',sans-serif;font-size:34px;font-weight:900;color:rgba(255,92,53,.9);line-height:1;margin-bottom:18px}
+
+    /* ── problem ────────────────────────────── */
+    .problem{background:var(--navy)}
+    .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+
+    /* ── why pillars ────────────────────────── */
+    .why{background:linear-gradient(180deg,#0F2030,var(--navy))}
+
+    /* ── split layout ───────────────────────── */
+    .split{display:grid;grid-template-columns:1.05fr 1fr;gap:64px;align-items:center}
+    .split-rev{grid-template-columns:1fr 1.05fr}
+    .split h2{margin-bottom:16px}
+    .split .lead{margin-bottom:28px}
+    .ticks{display:flex;flex-direction:column;gap:14px}
+    .ticks li{display:flex;align-items:flex-start;gap:13px;font-size:15.5px;font-weight:600;line-height:1.7}
+    .tick{width:26px;height:26px;border-radius:9px;flex-shrink:0;margin-top:2px;display:grid;place-items:center;
+      background:rgba(255,92,53,.15);color:var(--coral);font-size:13px;font-weight:900}
+    .mini-steps{display:flex;flex-direction:column;gap:16px;margin-top:30px}
+    .mini-step{display:flex;align-items:center;gap:14px;font-size:15px;font-weight:600;color:var(--tx-2)}
+    .mini-num{width:34px;height:34px;border-radius:11px;flex-shrink:0;display:grid;place-items:center;
+      font-family:'Inter',sans-serif;font-weight:900;font-size:14px;color:#fff;background:rgba(255,255,255,.08);border:1px solid var(--line-2)}
+    .mini-step:first-child .mini-num{background:var(--coral);border-color:var(--coral)}
+
+    /* ── device mockups ─────────────────────── */
+    .stage{position:relative;display:flex;justify-content:center;align-items:center;padding:20px 0}
+    .stage::before{content:'';position:absolute;width:78%;aspect-ratio:1;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,92,53,.28) 0%,rgba(255,92,53,0) 68%)}
+    .phone{
+      position:relative;width:290px;border-radius:44px;padding:11px;
+      background:linear-gradient(160deg,#2A3B4D,#101C29);box-shadow:var(--shadow);
+    }
+    .phone-screen{background:var(--cream);border-radius:34px;padding:20px 18px 22px;color:var(--navy);
+      direction:ltr;text-align:left;font-family:'Inter',sans-serif}
+    body:not(.lang-en) .phone-screen{direction:rtl;text-align:right;font-family:'Noto Sans Arabic',sans-serif}
+    .phone-bar{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#8B7F76;margin-bottom:14px;font-family:'Inter',sans-serif;direction:ltr}
+    .phone-brand{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+    .phone-brand span{width:26px;height:26px;border-radius:8px;background:var(--navy);display:grid;place-items:center}
+    .phone-brand span svg{width:13px;height:13px;fill:var(--coral)}
+    .phone-brand b{font-size:13px;font-weight:800}
+    .phone-screen h4{font-size:18px;font-weight:900;line-height:1.35;margin-bottom:4px}
+    .phone-screen .sub{font-size:11.5px;color:#7A6C63;line-height:1.6;margin-bottom:16px}
+    .field{background:#fff;border:1px solid #EADFD7;border-radius:11px;padding:9px 12px;margin-bottom:10px}
+    .field label{display:block;font-size:9.5px;font-weight:700;color:#A3948B;letter-spacing:.4px;margin-bottom:2px}
+    .field .val{font-size:13px;font-weight:700}
+    .chips{display:flex;gap:6px;margin:4px 0 16px}
+    .chip{flex:1;text-align:center;font-family:'Inter',sans-serif;font-size:12px;font-weight:700;padding:7px 0;border-radius:9px;
+      background:#fff;border:1px solid #EADFD7;color:#8B7F76}
+    .chip.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+    .phone-btn{background:var(--navy);color:#fff;text-align:center;font-size:13.5px;font-weight:800;padding:13px;border-radius:12px}
+    .phone-note{display:flex;align-items:center;gap:7px;margin-top:12px;font-size:10.5px;color:#8B7F76;line-height:1.5}
+    .phone-note b{color:var(--coral)}
+
+    .screenshot{
+      background:#F7F5F3;border-radius:22px;padding:18px;box-shadow:var(--shadow);
+      border:1px solid rgba(255,255,255,.14);color:#0D1B2A;
+      direction:ltr;font-family:'Inter',sans-serif;width:100%;position:relative;z-index:1;
+    }
+    .ss-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .ss-brand{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800}
+    .ss-brand i{width:8px;height:8px;border-radius:50%;background:var(--coral);display:block}
+    .ss-tabs{display:flex;gap:5px}
+    .ss-tab{font-size:10.5px;font-weight:700;padding:5px 11px;border-radius:8px;background:#EDE8E4;color:#6B7280}
+    .ss-tab.on{background:var(--coral);color:#fff}
+    .ss-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+    .ss-tiles.four{grid-template-columns:repeat(2,1fr)}
+    .ss-tile{background:#fff;border:1px solid #E7E1DC;border-radius:11px;padding:10px 12px}
+    .ss-tile .k{font-size:8.5px;font-weight:800;letter-spacing:.7px;color:#9CA3AF}
+    .ss-tile .v{font-size:19px;font-weight:900;line-height:1.3}
+    .ss-tile .v small{font-size:11px;font-weight:700;color:#6B7280}
+    .ss-open{display:flex;align-items:center;gap:8px;background:#ECFDF5;border:1px solid #C7EDDD;border-radius:10px;
+      padding:8px 11px;font-size:10.5px;font-weight:700;color:#047857;margin-bottom:12px}
+    .ss-open span,.ss-name,.ss-cap{unicode-bidi:plaintext}
+    .ss-name{text-align:left}
+    body:not(.lang-en) .ss-open span,body:not(.lang-en) .ss-name{font-family:'Noto Sans Arabic',sans-serif}
+    .ss-open i{width:7px;height:7px;border-radius:50%;background:var(--green);display:block}
+    .ss-row{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #E7E1DC;border-radius:11px;
+      padding:9px 11px;margin-bottom:7px}
+    .ss-code{font-size:10.5px;font-weight:800;color:#6B7280;width:52px;flex-shrink:0}
+    .ss-name{flex:1;min-width:0;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ss-ppl{font-size:10.5px;color:#9CA3AF;font-weight:700;width:26px;text-align:center;flex-shrink:0}
+    .ss-pill{font-size:9.5px;font-weight:800;padding:3px 9px;border-radius:100px;flex-shrink:0}
+    .p-wait{background:rgba(244,166,35,.18);color:#8A5C00}
+    .p-notif{background:rgba(255,92,53,.15);color:#C1500F}
+    .p-seat{background:rgba(16,185,129,.15);color:#047857}
+    .ss-act{font-size:9.5px;font-weight:800;padding:4px 11px;border-radius:8px;background:var(--coral);color:#fff;flex-shrink:0}
+    .ss-act.dim{background:#0D1B2A}
+    .ss-table{background:#fff;border:1px solid #E7E1DC;border-radius:11px;overflow:hidden;margin-top:4px}
+    .ss-th,.ss-tr{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;gap:4px;padding:7px 11px;font-size:9.5px}
+    .ss-th{background:#F3EFEC;font-weight:800;letter-spacing:.4px;color:#9CA3AF}
+    .ss-tr{border-top:1px solid #F0EBE7;font-weight:700;color:#4B5563}
+    .ss-tr b{color:#0D1B2A}
+    .ss-cap{font-size:11px;color:#A3968C;text-align:center;margin-top:14px;font-family:'Noto Sans Arabic',sans-serif;direction:rtl}
+    body.lang-en .ss-cap{direction:ltr;font-family:'Inter',sans-serif}
+
+    /* ── features ───────────────────────────── */
+    .features{background:var(--navy)}
+    .f-icon{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;margin-bottom:18px;
+      background:rgba(255,92,53,.13);border:1px solid rgba(255,92,53,.24)}
+    .f-icon svg{width:23px;height:23px;stroke:var(--coral);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+    .f-icon.gold{background:rgba(244,166,35,.13);border-color:rgba(244,166,35,.26)}
+    .f-icon.gold svg{stroke:var(--gold)}
+    .f-icon.green{background:rgba(16,185,129,.11);border-color:rgba(16,185,129,.24)}
+    .f-icon.green svg{stroke:#34D399}
+
+    /* ── CTA ────────────────────────────────── */
+    .cta{background:var(--ink);padding:120px 0;text-align:center}
+    .cta .orb-c{position:absolute;inset-block-start:-45%;inset-inline-end:-15%;width:min(820px,100vw);aspect-ratio:1;
+      border-radius:50%;background:radial-gradient(circle at 50% 55%,rgba(255,122,26,.55) 0%,rgba(143,58,10,.35) 38%,rgba(7,14,23,0) 70%)}
+    .cta .container{max-width:820px}
+    .cta .sparks{justify-content:center}
+    .cta h2{margin-bottom:18px}
+    .cta p{color:var(--tx-2);font-size:18px;line-height:1.9;margin-bottom:36px}
+    .cta-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+
+    /* ── footer ─────────────────────────────── */
+    footer{background:#050B12;padding:56px 0 34px;color:var(--tx-3)}
+    .footer-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:26px;
+      padding-bottom:30px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:26px}
+    .footer-brand{max-width:320px}
+    .footer-brand .logo{margin-bottom:12px}
+    .footer-brand p{font-size:14px;line-height:1.8}
+    .footer-links{display:flex;gap:26px;flex-wrap:wrap}
+    .footer-links a{font-size:14px;font-weight:700;color:rgba(255,255,255,.5);transition:color .2s}
+    .footer-links a:hover{color:#fff}
+    .footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-size:13px}
+
+    /* ── reveal ─────────────────────────────── */
+    .rv{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.7,.3,1),transform .7s cubic-bezier(.2,.7,.3,1)}
+    .rv.in{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+    /* ── responsive ─────────────────────────── */
+    @media (max-width:1000px){
+      .nav-links{display:none}
+      .split,.split-rev{grid-template-columns:1fr;gap:44px}
+      .hero .container{grid-template-columns:1fr;gap:30px;text-align:center;justify-items:center}
+      .hero .lead{max-width:540px;margin-inline:auto;text-wrap:balance}
+      .hero-cta{justify-content:center}
+      .hero-visual{min-height:560px;width:100%;max-width:420px;margin-inline:auto}
+      .sh-dots{inset-inline-end:-7%}
+      .sh-ring{inset-inline-end:-9%}
+      .sh-dot{inset-inline-start:-5%}
+      .sh-spark{inset-inline-start:2%}
+      .grid-4{grid-template-columns:repeat(2,1fr)}
+      .section{padding:84px 0}
+      .hero{padding:64px 0 84px}
+    }
+    @media (max-width:760px){
+      .container{padding:0 20px}
+      .grid-3,.grid-2,.grid-4{grid-template-columns:1fr;gap:16px}
+      .section,.section-tight{padding:64px 0}
+      .cta{padding:84px 0}
+      .navbar .container{height:66px}
+      .logo{font-size:20px}
+      .hero{padding:40px 0 60px}
+      .hero-visual{min-height:500px;max-width:330px}
+      .hero-visual .phone{width:270px}
+      .float-chip{inset-block-start:36%;inset-inline-start:-1%;font-size:11.5px;padding:9px 12px}
+      .sh-spark{display:none}
+      .sh-ring{width:76px;height:76px}
+      .sh-dots{width:44px;height:44px;background-size:11px 11px}
+      .hero-cta{justify-content:center}
+      .card{padding:26px}
+      .section-head{margin-bottom:40px}
+      .cta-btns{flex-direction:column;align-items:stretch}
+      .footer-top{flex-direction:column}
+      .footer-bottom{flex-direction:column;align-items:flex-start;gap:6px}
+      .stage{padding:0}
+      .ss-th,.ss-tr{grid-template-columns:1.4fr 1fr 1fr;font-size:9px}
+      .ss-th span:nth-child(n+4),.ss-tr span:nth-child(n+4){display:none}
+    }
+  </style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="spark" viewBox="0 0 24 24"><path d="M12 0c1.15 8.3 3.55 10.85 12 12-8.45 1.15-10.85 3.7-12 12-1.15-8.3-3.55-10.85-12-12C8.45 10.85 10.85 8.3 12 0z"/></symbol>
+</svg>
+
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <a href="#" class="logo">
+      <span class="logo-text">كلاود<span class="logo-accent">كيو</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#how"      data-key="nav_how">كيف يعمل</a></li>
+      <li><a href="#dashboard" data-key="nav_dash">لوحة التحكم</a></li>
+      <li><a href="#reports"  data-key="nav_reports">التقارير</a></li>
+      <li><a href="#features" data-key="nav_features">المميزات</a></li>
+    </ul>
+    <div class="nav-right">
+      <button class="lang-btn" onclick="toggleLang()" id="langBtn" aria-label="Switch language">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><path d="M2 12h20"/>
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<header class="hero">
+  <div class="orb orb-hero"></div>
+  <div class="orb orb-gold" style="inset-block-end:-40%;inset-inline-end:-10%"></div>
+  <div class="grain"></div>
+  <div class="container">
+    <div class="hero-copy">
+      <h1 class="h-xl" data-key="hero_h1">وداعًا للإدارة اليدوية<br/>مرحبًا بالإدارة <span class="hl">الذكية</span></h1>
+      <p class="lead" data-key="hero_p">ينضم ضيفك إلى الطابور عبر رابط، ويصله إشعار عندما يحين دوره، ويدير طاقمك الطابور من شاشة واحدة.</p>
+      <div class="hero-cta">
+        <a href="mailto:admin@cloudqueq.com" class="btn btn-primary btn-sm" data-key="hero_cta1">تواصل معنا</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <span class="shape sh-dots"></span>
+      <span class="shape sh-ring"></span>
+      <span class="shape sh-dot"></span>
+      <span class="shape sh-spark"><svg viewBox="0 0 24 24"><use href="#spark"/></svg></span>
+      <span class="shape sh-spark2"><svg viewBox="0 0 24 24"><use href="#spark"/></svg></span>
+
+      <div class="float-chip">
+        <span class="ok">&#10003;</span>
+        <span data-key="chip_t">تم إشعار الضيف</span>
+      </div>
+
+      <div class="phone">
+        <div class="lock-screen">
+          <div class="lock-time">9:41</div>
+          <div class="lock-date" data-key="lock_date">الجمعة، 8:41 مساءً</div>
+          <div class="notif">
+            <div class="notif-top">
+              <i><svg viewBox="0 0 24 24"><use href="#spark"/></svg></i>
+              <b data-key="lock_app">كلاودكيو</b>
+              <span class="t" data-key="lock_now">الآن</span>
+            </div>
+            <h5 data-key="lock_t">دورك جاهز</h5>
+            <p data-key="lock_b">طاولتك جاهزة الآن، توجّه إلى الاستقبال. رمزك Q-0593.</p>
+          </div>
+          <div class="notif dim">
+            <div class="notif-top">
+              <i><svg viewBox="0 0 24 24"><use href="#spark"/></svg></i>
+              <b data-key="lock_app2">كلاودكيو</b>
+              <span class="t" data-key="lock_ago">قبل 12 دقيقة</span>
+            </div>
+            <h5 data-key="lock_t2">تم تسجيلك في الطابور</h5>
+            <p data-key="lock_b2">أمامك 3 ضيوف تقريبًا.</p>
+          </div>
+          <div class="lock-home"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ PROBLEM ═══ -->
+<section class="problem section" id="problem">
+  <div class="orb orb-soft" style="inset-block-start:-25%;inset-inline-end:-20%"></div>
+  <div class="container">
+    <div class="section-head rv">
+      <span class="eyebrow" data-key="prob_eyebrow">المشكلة</span>
+      <h2 class="h-lg" data-key="prob_h2">المشكلة ليست الانتظار!</h2>
+      <p data-key="prob_p">الكلفة ليست في الانتظار، بل موظف يقضي الدوام في الاتصالات بدل أن يقضيه مع ضيوفك.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card rv">
+        <div class="card-num">1</div>
+        <h3 data-key="prob1_t">اتصالات يدوية متكررة</h3>
+        <p data-key="prob1_p">موظف مربوط بقائمة وجوال، يتصل بالضيوف واحدًا واحدًا طوال الوردية.</p>
+      </div>
+      <div class="card rv">
+        <div class="card-num">2</div>
+        <h3 data-key="prob2_t">متابعة غير واضحة</h3>
+        <p data-key="prob2_p">يصعب معرفة من حضر، ومن لم يحضر، ومن لا يزال ينتظر دوره.</p>
+      </div>
+      <div class="card rv">
+        <div class="card-num">3</div>
+        <h3 data-key="prob3_t">تحكم محدود</h3>
+        <p data-key="prob3_p">لا توجد وسيلة سهلة للتحكم في التسجيل أو تحديد عدد الضيوف خلال اليوم.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHY ═══ -->
+<section class="why section" id="why">
+  <div class="container">
+    <div class="section-head rv">
+      <span class="eyebrow" data-key="why_eyebrow">ليش كلاودكيو؟</span>
+      <h2 class="h-lg" data-key="why_h2">ثلاث نتائج مباشرة من أول يوم</h2>
+    </div>
+    <div class="grid-3">
+      <div class="card rv">
+        <h3 data-key="why1_t">طابور <em>أوضح</em> للضيف</h3>
+        <p data-key="why1_p">يعرف دوره وتصله رسالة في وقتها، فينتظر براحته بدل الوقوف عند الباب.</p>
+      </div>
+      <div class="card rv">
+        <h3 data-key="why2_t">تشغيل <em>أسهل</em> للموظف</h3>
+        <p data-key="why2_p">الطابور كله في شاشة واحدة، والإشعار بنقرة واحدة بدل عشرات الاتصالات.</p>
+      </div>
+      <div class="card rv">
+        <h3 data-key="why3_t">قرارات <em>أذكى</em> للمطعم</h3>
+        <p data-key="why3_p">أرقام واضحة عن الازدحام والانتظار وعدم الحضور تقود قرارك اليومي.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ GUEST JOURNEY ═══ -->
+<section class="section" id="how" style="background:var(--navy)">
+  <div class="orb orb-soft" style="inset-block-start:10%;inset-inline-start:-24%"></div>
+  <div class="container">
+    <div class="split">
+      <div class="rv">
+        <span class="eyebrow" data-key="guest_eyebrow">تجربة الضيف</span>
+        <h2 class="h-lg" data-key="guest_h2">كيف ينضم الضيف إلى الطابور؟</h2>
+        <p class="lead" data-key="guest_p">بدون تطبيق، بدون حساب، وفي ثوانٍ فقط. يُدخل الضيف اسمه ورقم جواله وعدد الأشخاص عبر الرابط أو رمز QR، وتصله رسالة SMS عندما يحين دوره.</p>
+        <div class="mini-steps">
+          <div class="mini-step"><span class="mini-num">1</span><span data-key="guest_s1">يمسح رمز QR على الطاولة أو الباب، أو يفتح الرابط</span></div>
+          <div class="mini-step"><span class="mini-num">2</span><span data-key="guest_s2">يُدخل اسمه ورقم جواله وعدد الأشخاص</span></div>
+          <div class="mini-step"><span class="mini-num">3</span><span data-key="guest_s3">تصله رسالة SMS عندما يحين دوره</span></div>
+        </div>
+      </div>
+      <div class="stage rv">
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-bar"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+            <div class="phone-brand">
+              <span><svg viewBox="0 0 24 24"><use href="#spark"/></svg></span>
+              <b data-key="ph_brand">مطعمك</b>
+            </div>
+            <h4 data-key="ph_title">انضم إلى الطابور</h4>
+            <p class="sub" data-key="ph_sub">أدخل بياناتك وستصلك رسالة SMS عندما تصبح طاولتك جاهزة.</p>
+            <div class="field">
+              <label data-key="ph_l1">الاسم الكامل</label>
+              <div class="val" data-key="ph_v1">سارة خالد</div>
+            </div>
+            <div class="field">
+              <label data-key="ph_l2">رقم الجوال</label>
+              <div class="val" style="direction:ltr">+966 5X XXX XXXX</div>
+            </div>
+            <label style="display:block;font-size:9.5px;font-weight:700;color:#A3948B;letter-spacing:.4px;margin-bottom:2px" data-key="ph_l3">عدد الأشخاص</label>
+            <div class="chips">
+              <div class="chip">1</div><div class="chip on">2</div><div class="chip">3</div><div class="chip">4</div><div class="chip">5+</div>
+            </div>
+            <div class="phone-btn" data-key="ph_btn">انضم الآن</div>
+            <div class="phone-note"><b>●</b><span data-key="ph_note">بدون تحميل تطبيق وبدون إنشاء حساب.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ STAFF DASHBOARD ═══ -->
+<section class="section" id="dashboard" style="background:linear-gradient(180deg,var(--navy),#0F2030)">
+  <div class="orb orb-soft" style="inset-block-end:-30%;inset-inline-end:-22%"></div>
+  <div class="container">
+    <div class="split split-rev">
+      <div class="stage rv">
+        <div class="screenshot">
+          <div class="ss-top">
+            <div class="ss-brand"><i></i><span data-key="ss_brand">CloudQue Staff</span></div>
+            <div class="ss-tabs">
+              <span class="ss-tab on" data-key="ss_tab1">Dashboard</span>
+              <span class="ss-tab" data-key="ss_tab2">Reports</span>
+            </div>
+          </div>
+          <div class="ss-tiles">
+            <div class="ss-tile"><div class="k" data-key="ss_k1">WAITING</div><div class="v">6</div></div>
+            <div class="ss-tile"><div class="k" data-key="ss_k2">NOTIFIED</div><div class="v">2</div></div>
+            <div class="ss-tile"><div class="k" data-key="ss_k3">SEATED</div><div class="v">3</div></div>
+          </div>
+          <div class="ss-open"><i></i><span data-key="ss_open">التسجيل مفتوح، يُغلق تلقائيًا 00:00</span></div>
+          <div class="ss-row">
+            <span class="ss-code">Q-0593</span><span class="ss-name" data-key="ss_n1">لطيف الغامدي</span>
+            <span class="ss-ppl">2</span><span class="ss-pill p-wait" data-key="ss_p1">Waiting</span><span class="ss-act" data-key="ss_a1">Notify</span>
+          </div>
+          <div class="ss-row">
+            <span class="ss-code">Q-0594</span><span class="ss-name" data-key="ss_n2">Yuki Tanaka</span>
+            <span class="ss-ppl">5</span><span class="ss-pill p-wait" data-key="ss_p1b">Waiting</span><span class="ss-act" data-key="ss_a1b">Notify</span>
+          </div>
+          <div class="ss-row">
+            <span class="ss-code">Q-0598</span><span class="ss-name" data-key="ss_n3">Elena Rossi</span>
+            <span class="ss-ppl">4</span><span class="ss-pill p-notif" data-key="ss_p2">Notified</span><span class="ss-act dim" data-key="ss_a2">Seat</span>
+          </div>
+          <div class="ss-row" style="border-color:rgba(16,185,129,.4)">
+            <span class="ss-code">Q-0591</span><span class="ss-name" data-key="ss_n4">نورة العتيبي</span>
+            <span class="ss-ppl">3</span><span class="ss-pill p-seat" data-key="ss_p3">Seated</span><span class="ss-act dim" style="background:#E7E1DC;color:#9CA3AF" data-key="ss_a3">Done</span>
+          </div>
+          <p class="ss-cap" data-key="ss_cap">صورة توضيحية للوحة تحكم الطاقم</p>
+        </div>
+      </div>
+      <div class="rv">
+        <span class="eyebrow" data-key="dash_eyebrow">لوحة تحكم الطاقم</span>
+        <h2 class="h-lg" data-key="dash_h2">إدارة الطابور من شاشة واحدة</h2>
+        <p class="lead" data-key="dash_p">يرى الموظف الطابور وحالة كل ضيف مباشرةً، ويحدّث الحالة بنقرة واحدة. وعندما يصبح الدور جاهزًا، يضغط زر الإشعار فتصل رسالة SMS إلى الضيف.</p>
+        <ul class="ticks">
+          <li><span class="tick">&#10003;</span><span data-key="dash_t1">تحديث حالة كل ضيف بسهولة: انتظار، إشعار، جلوس، أو إلغاء</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="dash_t2">معرفة من حضر ومن لم يحضر في أي لحظة</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="dash_t3">تقليل الاتصالات اليدوية إلى الحد الأدنى</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="dash_t4">بحث سريع بالرمز أو الاسم أو رقم الجوال</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REPORTS ═══ -->
+<section class="section" id="reports" style="background:var(--navy)">
+  <div class="orb orb-gold" style="inset-block-start:-20%;inset-inline-start:-18%"></div>
+  <div class="container">
+    <div class="split">
+      <div class="rv">
+        <span class="eyebrow" data-key="rep_eyebrow">التقارير</span>
+        <h2 class="h-lg" data-key="rep_h2">أعرف أداء طابورك بالأرقام</h2>
+        <p class="lead" data-key="rep_p">تقارير تساعدك على معرفة أوقات الازدحام، وقياس كفاءة الانتظار، وتحسين التشغيل يومًا بعد يوم.</p>
+        <ul class="ticks">
+          <li><span class="tick">&#10003;</span><span data-key="rep_t1">عدد المنضمين إلى الطابور يوميًا</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="rep_t2">عدد الضيوف الذين تمت خدمتهم</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="rep_t3">عدد حالات عدم الحضور</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="rep_t4">متوسط وقت الانتظار وأكثر الأيام ازدحامًا</span></li>
+        </ul>
+      </div>
+      <div class="stage rv">
+        <div class="screenshot">
+          <div class="ss-top">
+            <div class="ss-brand"><i></i><span data-key="ss_brand2">CloudQue Staff</span></div>
+            <div class="ss-tabs">
+              <span class="ss-tab" data-key="ss_tab1b">Dashboard</span>
+              <span class="ss-tab on" data-key="ss_tab2b">Reports</span>
+              <span class="ss-tab" data-key="ss_tab3">Export CSV</span>
+            </div>
+          </div>
+          <div class="ss-tiles four">
+            <div class="ss-tile"><div class="k" data-key="ss_r1">TOTAL ENTRIES</div><div class="v">598</div></div>
+            <div class="ss-tile"><div class="k" data-key="ss_r2">GUESTS</div><div class="v">2104</div></div>
+            <div class="ss-tile"><div class="k" data-key="ss_r3">SEATED</div><div class="v">466</div></div>
+            <div class="ss-tile"><div class="k" data-key="ss_r4">AVG WAIT</div><div class="v">21 <small>min</small></div></div>
+          </div>
+          <div class="ss-table">
+            <div class="ss-th">
+              <span data-key="ss_h1">DATE</span><span data-key="ss_h2">ENTRIES</span><span data-key="ss_h3">SEATED</span><span data-key="ss_h4">NO SHOW</span><span data-key="ss_h5">AVG WAIT</span>
+            </div>
+            <div class="ss-tr"><b>2026-08-23</b><span>31</span><span>29</span><span>0</span><span>18 min</span></div>
+            <div class="ss-tr"><b>2026-08-22</b><span>49</span><span>40</span><span>2</span><span>27 min</span></div>
+            <div class="ss-tr"><b>2026-08-21</b><span>26</span><span>22</span><span>1</span><span>26 min</span></div>
+            <div class="ss-tr"><b>2026-08-20</b><span>24</span><span>19</span><span>2</span><span>28 min</span></div>
+          </div>
+          <p class="ss-cap" data-key="ss_cap2">صورة توضيحية لشاشة التقارير، أرقام العرض للتوضيح فقط</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ REGISTRATION CONTROL ═══ -->
+<section class="section" id="control" style="background:linear-gradient(180deg,var(--navy),#0F2030)">
+  <div class="container">
+    <div class="section-head rv">
+      <span class="eyebrow" data-key="ctrl_eyebrow">التحكم في التسجيل</span>
+      <h2 class="h-lg" data-key="ctrl_h2">التسجيل يفتح ويُغلق كما تريد أنت</h2>
+      <p data-key="ctrl_p">أنت من يقرر متى يُستقبل الضيوف، وكم عددهم، وكيف تبدو صفحة التسجيل.</p>
+    </div>
+    <div class="grid-4">
+      <div class="card rv">
+        <div class="f-icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg></div>
+        <h3 data-key="ctrl1_t">جدولة تلقائية</h3>
+        <p data-key="ctrl1_p">يُفتح ويُغلق التسجيل تلقائيًا وفق ساعات العمل التي تحددها.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg></div>
+        <h3 data-key="ctrl2_t">تحكم يدوي فوري</h3>
+        <p data-key="ctrl2_p">أوقف استقبال التسجيلات أو أعد فتحه من لوحة التحكم في أي وقت.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon green"><svg viewBox="0 0 24 24"><path d="M3 17V9M9 17V5M15 17v-6M21 17v-9"/><path d="M2 21h20"/></svg></div>
+        <h3 data-key="ctrl3_t">السعة اليومية</h3>
+        <p data-key="ctrl3_p">حدّد العدد الأقصى للضيوف، ويتوقف التسجيل تلقائيًا عند بلوغه.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 8h18M8 21V8"/></svg></div>
+        <h3 data-key="ctrl4_t">تصميم واجهة الضيف</h3>
+        <p data-key="ctrl4_p">عدّل شكل صفحة التسجيل التي يراها ضيفك لتناسب هوية مطعمك.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="features section" id="features">
+  <div class="orb orb-soft" style="inset-block-start:-18%;inset-inline-end:-20%"></div>
+  <div class="container">
+    <div class="section-head rv">
+      <span class="eyebrow" data-key="feat_eyebrow">المميزات</span>
+      <h2 class="h-lg" data-key="feat_h2">كل ما يحتاجه مطعمك لإدارة طابور أذكى</h2>
+      <p data-key="feat_p">مصمّم لفرق الاستقبال المشغولة: بلا تدريب طويل، وبلا أي تعقيد على الضيف.</p>
+    </div>
+    <div class="grid-3">
+      <div class="card rv">
+        <div class="f-icon"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><path d="M13 13h3v3h-3zM20 13v3M17 20h3M13 20h1"/></svg></div>
+        <h3 data-key="f1_t">بدون تطبيق للضيف</h3>
+        <p data-key="f1_p">رابط أو رمز QR فقط: بدون تحميل، وبدون إنشاء حساب، وبدون خطوات معقدة.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon gold"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.9 8.9 0 0 1-3.8-.9L3 21l2-4.9A8.4 8.4 0 0 1 4 11.5 8.4 8.4 0 0 1 12.5 3 8.4 8.4 0 0 1 21 11.5z"/></svg></div>
+        <h3 data-key="f2_t">إشعارات SMS</h3>
+        <p data-key="f2_p">رسالة نصية تصل الضيف فور جاهزية دوره، بلا مناداة أسماء وبلا اتصالات.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon green"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M7 10h4M7 14h7"/></svg></div>
+        <h3 data-key="f3_t">رموز مرجعية واضحة</h3>
+        <p data-key="f3_p">كل ضيف يحصل على رمز مثل <strong>Q-0593</strong> يسهل مطابقته على الشاشة أو عبر الهاتف.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3 data-key="f4_t">متابعة عدم الحضور</h3>
+        <p data-key="f4_p">سجّل من لم يحضر خلال المهلة المحددة، وتابع نسبة عدم الحضور في التقارير.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon gold"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3 data-key="f5_t">دخول آمن للطاقم</h3>
+        <p data-key="f5_p">يسجّل الطاقم دخوله ببيانات آمنة، والجلسات محمية وكل إجراء منسوب لصاحبه.</p>
+      </div>
+      <div class="card rv">
+        <div class="f-icon green"><svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M8 11l4 4 4-4"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg></div>
+        <h3 data-key="f6_t">تصدير التقارير CSV</h3>
+        <p data-key="f6_p">صدّر بيانات طابورك إلى ملف CSV وحلّلها بالطريقة التي تناسب فريقك.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA ═══ -->
+<section class="cta" id="contact">
+  <div class="orb-c"></div>
+  <div class="container">
+    <div class="sparks rv">
+      <svg class="spark"><use href="#spark"/></svg>
+      <svg class="spark"><use href="#spark"/></svg>
+    </div>
+    <div class="rv">
+      <h2 class="h-lg" data-key="cta_h2">جاهز لتجربة <em>طابور أذكى؟</em></h2>
+      <p data-key="cta_p">تواصل معنا اليوم وابدأ رحلتك نحو إدارة أذكى لطابور الانتظار في مطعمك أو مقهاك. عرض تجريبي مجاني، بدون التزام وبدون رسوم إعداد.</p>
+      <div class="cta-btns">
+        <a href="mailto:admin@cloudqueq.com" class="btn btn-primary btn-lg" data-key="cta_b1">احجز عرضًا تجريبيًا مجانيًا</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="logo">
+          <span class="footer-logo-text">كلاود<span class="logo-accent">كيو</span></span>
+        </a>
+        <p data-key="footer_about">نظام إدارة الطوابير الذكي للمطاعم والمقاهي.</p>
+      </div>
+      <nav class="footer-links">
+        <a href="#how" data-key="footer_how">كيف يعمل</a>
+        <a href="#dashboard" data-key="footer_dash">لوحة التحكم</a>
+        <a href="#reports" data-key="footer_reports">التقارير</a>
+        <a href="#features" data-key="footer_feat">المميزات</a>
+        <a href="mailto:admin@cloudqueq.com" data-key="footer_contact">تواصل معنا</a>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <p data-key="footer_copy">© 2026 كلاودكيو. جميع الحقوق محفوظة.</p>
+      <p><span data-key="footer_q">للاستفسارات: </span><a href="mailto:admin@cloudqueq.com" style="color:var(--coral);font-weight:700">admin@cloudqueq.com</a></p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const CONTENT = {
+    ar: {
+      nav_how:'كيف يعمل', nav_dash:'لوحة التحكم', nav_reports:'التقارير', nav_features:'المميزات',
+      hero_h1:'وداعًا للإدارة اليدوية<br/>مرحبًا بالإدارة <span class=\"hl\">الذكية</span>',
+      hero_p:'ينضم ضيفك إلى الطابور عبر رابط، ويصله إشعار عندما يحين دوره، ويدير طاقمك الطابور من شاشة واحدة.',
+      hero_cta1:'تواصل معنا',
+      chip_t:'تم إشعار الضيف',
+      lock_date:'الجمعة، 8:41 مساءً', lock_app:'كلاودكيو', lock_app2:'كلاودكيو',
+      lock_now:'الآن', lock_ago:'قبل 12 دقيقة',
+      lock_t:'دورك جاهز', lock_b:'طاولتك جاهزة الآن، توجّه إلى الاستقبال. رمزك Q-0593.',
+      lock_t2:'تم تسجيلك في الطابور', lock_b2:'أمامك 3 ضيوف تقريبًا.',
+
+      prob_eyebrow:'المشكلة', prob_h2:'المشكلة ليست الانتظار!',
+      prob_p:'الكلفة ليست في الانتظار، بل موظف يقضي الدوام في الاتصالات بدل أن يقضيه مع ضيوفك.',
+      prob1_t:'اتصالات يدوية متكررة', prob1_p:'موظف مربوط بقائمة وجوال، يتصل بالضيوف واحدًا واحدًا طوال الوردية.',
+      prob2_t:'متابعة غير واضحة', prob2_p:'يصعب معرفة من حضر، ومن لم يحضر، ومن لا يزال ينتظر دوره.',
+      prob3_t:'تحكم محدود', prob3_p:'لا توجد وسيلة سهلة للتحكم في التسجيل أو تحديد عدد الضيوف خلال اليوم.',
+
+      why_eyebrow:'ليش كلاودكيو؟', why_h2:'ثلاث نتائج مباشرة من أول يوم',
+      why1_t:'طابور <em>أوضح</em> للضيف', why1_p:'يعرف دوره وتصله رسالة في وقتها، فينتظر براحته بدل الوقوف عند الباب.',
+      why2_t:'تشغيل <em>أسهل</em> للموظف', why2_p:'الطابور كله في شاشة واحدة، والإشعار بنقرة واحدة بدل عشرات الاتصالات.',
+      why3_t:'قرارات <em>أذكى</em> للمطعم', why3_p:'أرقام واضحة عن الازدحام والانتظار وعدم الحضور تقود قرارك اليومي.',
+
+      guest_eyebrow:'تجربة الضيف', guest_h2:'كيف ينضم الضيف إلى الطابور؟',
+      guest_p:'بدون تطبيق، بدون حساب، وفي ثوانٍ فقط. يُدخل الضيف اسمه ورقم جواله وعدد الأشخاص عبر الرابط أو رمز QR، وتصله رسالة SMS عندما يحين دوره.',
+      guest_s1:'يمسح رمز QR على الطاولة أو الباب، أو يفتح الرابط',
+      guest_s2:'يُدخل اسمه ورقم جواله وعدد الأشخاص',
+      guest_s3:'تصله رسالة SMS عندما يحين دوره',
+      ph_brand:'مطعمك', ph_title:'انضم إلى الطابور',
+      ph_sub:'أدخل بياناتك وستصلك رسالة SMS عندما تصبح طاولتك جاهزة.',
+      ph_l1:'الاسم الكامل', ph_v1:'سارة خالد', ph_l2:'رقم الجوال', ph_l3:'عدد الأشخاص',
+      ph_btn:'انضم الآن', ph_note:'بدون تحميل تطبيق وبدون إنشاء حساب.',
+
+      dash_eyebrow:'لوحة تحكم الطاقم', dash_h2:'إدارة الطابور من شاشة واحدة',
+      dash_p:'يرى الموظف الطابور وحالة كل ضيف مباشرةً، ويحدّث الحالة بنقرة واحدة. وعندما يصبح الدور جاهزًا، يضغط زر الإشعار فتصل رسالة SMS إلى الضيف.',
+      dash_t1:'تحديث حالة كل ضيف بسهولة: انتظار، إشعار، جلوس، أو إلغاء',
+      dash_t2:'معرفة من حضر ومن لم يحضر في أي لحظة',
+      dash_t3:'تقليل الاتصالات اليدوية إلى الحد الأدنى',
+      dash_t4:'بحث سريع بالرمز أو الاسم أو رقم الجوال',
+      ss_brand:'CloudQue Staff', ss_tab1:'Dashboard', ss_tab2:'Reports',
+      ss_k1:'WAITING', ss_k2:'NOTIFIED', ss_k3:'SEATED',
+      ss_open:'التسجيل مفتوح، يُغلق تلقائيًا 00:00',
+      ss_n1:'لطيف الغامدي', ss_n2:'Yuki Tanaka', ss_n3:'Elena Rossi', ss_n4:'نورة العتيبي',
+      ss_p1:'Waiting', ss_p1b:'Waiting', ss_p2:'Notified', ss_p3:'Seated',
+      ss_a1:'Notify', ss_a1b:'Notify', ss_a2:'Seat', ss_a3:'Done',
+      ss_cap:'صورة توضيحية للوحة تحكم الطاقم',
+
+      rep_eyebrow:'التقارير', rep_h2:'أعرف أداء طابورك بالأرقام',
+      rep_p:'تقارير تساعدك على معرفة أوقات الازدحام، وقياس كفاءة الانتظار، وتحسين التشغيل يومًا بعد يوم.',
+      rep_t1:'عدد المنضمين إلى الطابور يوميًا',
+      rep_t2:'عدد الضيوف الذين تمت خدمتهم',
+      rep_t3:'عدد حالات عدم الحضور',
+      rep_t4:'متوسط وقت الانتظار وأكثر الأيام ازدحامًا',
+      ss_brand2:'CloudQue Staff', ss_tab1b:'Dashboard', ss_tab2b:'Reports', ss_tab3:'Export CSV',
+      ss_r1:'TOTAL ENTRIES', ss_r2:'GUESTS', ss_r3:'SEATED', ss_r4:'AVG WAIT',
+      ss_h1:'DATE', ss_h2:'ENTRIES', ss_h3:'SEATED', ss_h4:'NO SHOW', ss_h5:'AVG WAIT',
+      ss_cap2:'صورة توضيحية لشاشة التقارير، أرقام العرض للتوضيح فقط',
+
+      ctrl_eyebrow:'التحكم في التسجيل', ctrl_h2:'التسجيل يفتح ويُغلق كما تريد أنت',
+      ctrl_p:'أنت من يقرر متى يُستقبل الضيوف، وكم عددهم، وكيف تبدو صفحة التسجيل.',
+      ctrl1_t:'جدولة تلقائية', ctrl1_p:'يُفتح ويُغلق التسجيل تلقائيًا وفق ساعات العمل التي تحددها.',
+      ctrl2_t:'تحكم يدوي فوري', ctrl2_p:'أوقف استقبال التسجيلات أو أعد فتحه من لوحة التحكم في أي وقت.',
+      ctrl3_t:'السعة اليومية', ctrl3_p:'حدّد العدد الأقصى للضيوف، ويتوقف التسجيل تلقائيًا عند بلوغه.',
+      ctrl4_t:'تصميم واجهة الضيف', ctrl4_p:'عدّل شكل صفحة التسجيل التي يراها ضيفك لتناسب هوية مطعمك.',
+
+      feat_eyebrow:'المميزات', feat_h2:'كل ما يحتاجه مطعمك لإدارة طابور أذكى',
+      feat_p:'مصمّم لفرق الاستقبال المشغولة: بلا تدريب طويل، وبلا أي تعقيد على الضيف.',
+      f1_t:'بدون تطبيق للضيف', f1_p:'رابط أو رمز QR فقط: بدون تحميل، وبدون إنشاء حساب، وبدون خطوات معقدة.',
+      f2_t:'إشعارات SMS', f2_p:'رسالة نصية تصل الضيف فور جاهزية دوره، بلا مناداة أسماء وبلا اتصالات.',
+      f3_t:'رموز مرجعية واضحة', f3_p:'كل ضيف يحصل على رمز مثل <strong>Q-0593</strong> يسهل مطابقته على الشاشة أو عبر الهاتف.',
+      f4_t:'متابعة عدم الحضور', f4_p:'سجّل من لم يحضر خلال المهلة المحددة، وتابع نسبة عدم الحضور في التقارير.',
+      f5_t:'دخول آمن للطاقم', f5_p:'يسجّل الطاقم دخوله ببيانات آمنة، والجلسات محمية وكل إجراء منسوب لصاحبه.',
+      f6_t:'تصدير التقارير CSV', f6_p:'صدّر بيانات طابورك إلى ملف CSV وحلّلها بالطريقة التي تناسب فريقك.',
+
+      cta_h2:'جاهز لتجربة <em>طابور أذكى؟</em>',
+      cta_p:'تواصل معنا اليوم وابدأ رحلتك نحو إدارة أذكى لطابور الانتظار في مطعمك أو مقهاك. عرض تجريبي مجاني، بدون التزام وبدون رسوم إعداد.',
+      cta_b1:'احجز عرضًا تجريبيًا مجانيًا',
+
+      footer_about:'نظام إدارة الطوابير الذكي للمطاعم والمقاهي.',
+      footer_how:'كيف يعمل', footer_dash:'لوحة التحكم', footer_reports:'التقارير',
+      footer_feat:'المميزات', footer_contact:'تواصل معنا',
+      footer_copy:'© 2026 كلاودكيو. جميع الحقوق محفوظة.', footer_q:'للاستفسارات: '
+    },
+
+    en: {
+      nav_how:'How it works', nav_dash:'Dashboard', nav_reports:'Reports', nav_features:'Features',
+      hero_h1:'Goodbye manual queues.<br/>Hello <span class=\"hl\">smarter</span> management.',
+      hero_p:'Your guest joins the queue from a link, gets a notification when it is their turn, and your team runs the whole queue from one screen.',
+      hero_cta1:'Contact us',
+      chip_t:'Guest notified',
+      lock_date:'Friday, 8:41 PM', lock_app:'CloudQue', lock_app2:'CloudQue',
+      lock_now:'now', lock_ago:'12 min ago',
+      lock_t:'Your table is ready', lock_b:'Head to the host stand. Your code is Q-0593.',
+      lock_t2:"You're in the queue", lock_b2:'About 3 guests ahead of you.',
+
+      prob_eyebrow:'The problem', prob_h2:'The problem is not the waiting!',
+      prob_p:'The cost is not the waiting. It is an employee spending the shift on phone calls instead of spending it with your guests.',
+      prob1_t:'Repetitive manual calls', prob1_p:'One employee tied to a list and a phone, calling guests one by one for the whole shift.',
+      prob2_t:'No clear tracking', prob2_p:'It is hard to tell who showed up, who did not, and who is still waiting.',
+      prob3_t:'Limited control', prob3_p:'No easy way to control registration or cap how many guests you take during the day.',
+
+      why_eyebrow:'Why CloudQue?', why_h2:'Three results from day one',
+      why1_t:'A <em>clearer</em> queue for guests', why1_p:'They know their place and get a message on time, so they wait comfortably instead of standing at the door.',
+      why2_t:'<em>Easier</em> operation for staff', why2_p:'The whole queue on one screen, and notifications in one tap instead of dozens of calls.',
+      why3_t:'<em>Smarter</em> decisions for you', why3_p:'Clear numbers on rush hours, wait times and no-shows to guide your daily decisions.',
+
+      guest_eyebrow:'Guest experience', guest_h2:'How does a guest join the queue?',
+      guest_p:'No app, no account, and it takes seconds. The guest enters their name, mobile number and party size through your link or QR code, and receives an SMS when it is their turn.',
+      guest_s1:'Scans the QR code at the door, or opens the link',
+      guest_s2:'Enters their name, mobile number and party size',
+      guest_s3:'Receives an SMS when their turn is ready',
+      ph_brand:'Your Restaurant', ph_title:'Join the Queue',
+      ph_sub:'Enter your details and you will receive an SMS when your table is ready.',
+      ph_l1:'Full name', ph_v1:'Sara Khalid', ph_l2:'Phone number', ph_l3:'Number of people',
+      ph_btn:'Join now', ph_note:'No app download and no account needed.',
+
+      dash_eyebrow:'Staff dashboard', dash_h2:'Run the whole queue from one screen',
+      dash_p:'Your team sees the queue and every guest status live, and updates it in one tap. When a table opens, one press of the notify button sends the guest an SMS.',
+      dash_t1:'Update every guest status easily: waiting, notified, seated or cancelled',
+      dash_t2:'Know who showed up and who did not, at any moment',
+      dash_t3:'Cut manual phone calls down to a minimum',
+      dash_t4:'Search instantly by code, name or phone number',
+      ss_brand:'CloudQue Staff', ss_tab1:'Dashboard', ss_tab2:'Reports',
+      ss_k1:'WAITING', ss_k2:'NOTIFIED', ss_k3:'SEATED',
+      ss_open:'Registration open, closes automatically at 00:00',
+      ss_n1:'Latif Al-Ghamdi', ss_n2:'Yuki Tanaka', ss_n3:'Elena Rossi', ss_n4:'Noura Al-Otaibi',
+      ss_p1:'Waiting', ss_p1b:'Waiting', ss_p2:'Notified', ss_p3:'Seated',
+      ss_a1:'Notify', ss_a1b:'Notify', ss_a2:'Seat', ss_a3:'Done',
+      ss_cap:'Illustration of the staff dashboard',
+
+      rep_eyebrow:'Reports', rep_h2:'Know how your queue performs, in numbers',
+      rep_p:'Reports that show you when the rush happens, measure how efficiently you move the queue, and improve operations day after day.',
+      rep_t1:'How many guests joined the queue each day',
+      rep_t2:'How many guests were actually served',
+      rep_t3:'How many no-shows you had',
+      rep_t4:'Average wait time and your busiest days',
+      ss_brand2:'CloudQue Staff', ss_tab1b:'Dashboard', ss_tab2b:'Reports', ss_tab3:'Export CSV',
+      ss_r1:'TOTAL ENTRIES', ss_r2:'GUESTS', ss_r3:'SEATED', ss_r4:'AVG WAIT',
+      ss_h1:'DATE', ss_h2:'ENTRIES', ss_h3:'SEATED', ss_h4:'NO SHOW', ss_h5:'AVG WAIT',
+      ss_cap2:'Illustration of the reports screen, sample figures shown for demonstration',
+
+      ctrl_eyebrow:'Registration control', ctrl_h2:'Registration opens and closes on your terms',
+      ctrl_p:'You decide when guests are accepted, how many of them, and how the join page looks.',
+      ctrl1_t:'Automatic scheduling', ctrl1_p:'Registration opens and closes automatically according to the working hours you set.',
+      ctrl2_t:'Instant manual control', ctrl2_p:'Stop accepting new entries or reopen registration from the dashboard at any time.',
+      ctrl3_t:'Daily capacity', ctrl3_p:'Set a maximum number of guests, and registration stops automatically once it is reached.',
+      ctrl4_t:'Customisable guest page', ctrl4_p:'Adjust how the join page your guest sees looks, so it fits your restaurant.',
+
+      feat_eyebrow:'Features', feat_h2:'Everything your restaurant needs to run a smarter queue',
+      feat_p:'Built for busy front-of-house teams: no long training, and no friction for the guest.',
+      f1_t:'No app for guests', f1_p:'Just a link or a QR code: no download, no account, and no complicated steps.',
+      f2_t:'Automatic SMS notifications', f2_p:'A text message reaches the guest the moment their turn is ready. No shouting names, no phone calls.',
+      f3_t:'Clear reference codes', f3_p:'Every guest gets a code like <strong>Q-0593</strong> that is easy to match on screen or over the phone.',
+      f4_t:'No-show tracking', f4_p:'Mark guests who did not arrive within your window, and follow the no-show rate in your reports.',
+      f5_t:'Secure staff login', f5_p:'Staff sign in with secure credentials, sessions are protected, and every action is properly attributed.',
+      f6_t:'CSV report export', f6_p:'Export your queue data to a CSV file and analyse it however your team prefers.',
+
+      cta_h2:'Ready for a <em>smarter queue?</em>',
+      cta_p:'Talk to us today and start running a smarter waiting queue in your restaurant or café. Free demo, no commitment and no setup fees.',
+      cta_b1:'Book a free demo',
+
+      footer_about:'Smart queue management for restaurants and cafés.',
+      footer_how:'How it works', footer_dash:'Dashboard', footer_reports:'Reports',
+      footer_feat:'Features', footer_contact:'Contact',
+      footer_copy:'© 2026 CloudQue. All rights reserved.', footer_q:'Questions? '
+    }
+  };
+
+  const LOGO = { ar:{main:'كلاود', accent:'كيو'}, en:{main:'Cloud', accent:'Que'} };
+  const MINI_NUMS = { ar:['١','٢','٣'], en:['1','2','3'] };
+  const CARD_NUMS = { ar:['1','2','3'], en:['1','2','3'] };
+  let lang = 'ar';
+
+  function applyLang(l){
+    const d = CONTENT[l];
+    document.documentElement.lang = l;
+    document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+    document.body.className = l === 'ar' ? '' : 'lang-en';
+    document.title = l === 'ar' ? 'كلاودكيو | إدارة ذكية لطوابير الانتظار' : 'CloudQue | Smart queue management';
+    document.querySelectorAll('[data-key]').forEach(el=>{
+      const v = d[el.dataset.key];
+      if (v !== undefined) el.innerHTML = v;
+    });
+    document.querySelectorAll('.mini-num').forEach((el,i)=>{ el.textContent = MINI_NUMS[l][i % 3]; });
+    document.querySelectorAll('.card-num').forEach((el,i)=>{ el.textContent = CARD_NUMS[l][i % 3]; });
+    document.querySelectorAll('.logo-text, .footer-logo-text').forEach(el=>{
+      el.innerHTML = LOGO[l].main + '<span class="logo-accent">' + LOGO[l].accent + '</span>';
+    });
+  }
+
+  function toggleLang(){ lang = lang === 'ar' ? 'en' : 'ar'; applyLang(lang); }
+
+  // sticky navbar state
+  const nav = document.getElementById('navbar');
+  const onScroll = () => nav.classList.toggle('stuck', window.scrollY > 24);
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // reveal on scroll
+  const reveal = el => el.classList.add('in');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ reveal(e.target); io.unobserve(e.target); } });
+    }, {threshold:0, rootMargin:'0px 0px -8% 0px'});
+    document.querySelectorAll('.rv').forEach((el,i)=>{
+      el.style.transitionDelay = (i % 4) * 70 + 'ms';
+      io.observe(el);
+    });
+    // safety net: never leave content hidden
+    window.addEventListener('load', ()=> setTimeout(()=>{
+      document.querySelectorAll('.rv:not(.in)').forEach(el=>{
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight * 1.2) reveal(el);
+      });
+    }, 400));
+  } else {
+    document.querySelectorAll('.rv').forEach(reveal);
+  }
+
+  applyLang('ar');
+</script>
+
+</body>
+</html>
