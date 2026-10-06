@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  <meta name="facebook-domain-verification" content="ygb78c4nqvurc1t3f670f2w39fhfos" />
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="description" content="كلاودكيو | نظام إدارة الطوابير الذكي للمطاعم والمقاهي. ينضم ضيفك عبر رابط أو رمز QR بدون تطبيق، وتصله رسالة SMS عندما يحين دوره."/>
@@ -297,6 +298,35 @@
     .f-icon.green{background:rgba(16,185,129,.11);border-color:rgba(16,185,129,.24)}
     .f-icon.green svg{stroke:#34D399}
 
+    /* ── digital menu ───────────────────────── */
+    .q-bar{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;border-radius:13px;padding:10px 12px;margin-bottom:14px}
+    .q-bar .q-code{font-family:'Inter',sans-serif;font-weight:800;font-size:11px;color:var(--coral);
+      background:rgba(255,92,53,.16);padding:4px 8px;border-radius:7px;direction:ltr;flex-shrink:0}
+    .q-bar .q-txt{flex:1;min-width:0;line-height:1.35}
+    .q-bar .q-txt b{display:block;font-size:12px;font-weight:800}
+    .q-bar .q-txt span{font-size:10px;color:rgba(255,255,255,.62);font-weight:600}
+    .m-tabs{display:flex;gap:6px;margin:6px 0 12px;overflow:hidden}
+    .m-tab{font-size:10.5px;font-weight:700;padding:6px 11px;border-radius:9px;background:#fff;border:1px solid #EADFD7;color:#8B7F76;white-space:nowrap}
+    .m-tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
+    .m-item{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid #EADFD7;border-radius:13px;padding:8px;margin-bottom:8px}
+    .m-img{width:50px;height:50px;border-radius:10px;flex-shrink:0}
+    .m-img.a{background:radial-gradient(circle at 35% 35%,#F6C27A,#C9772E 60%,#8A4B1C)}
+    .m-img.b{background:radial-gradient(circle at 40% 40%,#FFD9A0,#E08A3C 55%,#9C4E16)}
+    .m-img.c{background:radial-gradient(circle at 40% 40%,#E9C08A,#A8733E 60%,#6B4523)}
+    .m-body{flex:1;min-width:0}
+    .m-name{font-size:12.5px;font-weight:800;line-height:1.4}
+    .m-meta{font-size:9.5px;color:#A3948B;font-weight:600;line-height:1.5}
+    .m-price{font-size:12px;font-weight:900;white-space:nowrap;flex-shrink:0}
+    .m-item.off .m-img,.m-item.off .m-body{opacity:.45}
+    .m-off{font-size:9px;font-weight:800;background:#EDE8E4;color:#6B7280;padding:3px 9px;border-radius:100px;flex-shrink:0}
+    .menu-chip{position:absolute;z-index:3;inset-block-end:-1%;inset-inline-end:-4%;
+      background:#fff;color:var(--navy);border-radius:15px;padding:11px 15px;display:flex;align-items:center;gap:10px;
+      box-shadow:0 20px 44px rgba(0,0,0,.5);font-size:12.5px;font-weight:800;white-space:nowrap;animation:floaty 5.5s ease-in-out .9s infinite}
+    .menu-chip i{width:24px;height:24px;border-radius:50%;flex-shrink:0;background:var(--coral);display:grid;place-items:center}
+    .menu-chip i svg{width:11px;height:11px;fill:#fff}
+    @media (prefers-reduced-motion:reduce){.menu-chip{animation:none}}
+    @media (max-width:760px){.menu-chip{inset-inline-end:0;font-size:11.5px;padding:9px 12px}}
+
     /* ── CTA ────────────────────────────────── */
     .cta{background:var(--ink);padding:120px 0;text-align:center}
     .cta .orb-c{position:absolute;inset-block-start:-45%;inset-inline-end:-15%;width:min(820px,100vw);aspect-ratio:1;
@@ -381,6 +411,7 @@
       <li><a href="#how"      data-key="nav_how">كيف يعمل</a></li>
       <li><a href="#dashboard" data-key="nav_dash">لوحة التحكم</a></li>
       <li><a href="#reports"  data-key="nav_reports">التقارير</a></li>
+      <li><a href="#menu"     data-key="nav_menu">القائمة الرقمية</a></li>
       <li><a href="#features" data-key="nav_features">المميزات</a></li>
     </ul>
     <div class="nav-right">
@@ -650,6 +681,67 @@
   </div>
 </section>
 
+<!-- ═══ DIGITAL MENU ═══ -->
+<section class="section" id="menu" style="background:var(--navy)">
+  <div class="orb orb-soft" style="inset-block-start:-10%;inset-inline-end:-24%"></div>
+  <div class="container">
+    <div class="split split-rev">
+      <div class="stage rv">
+        <div class="menu-chip">
+          <i><svg viewBox="0 0 24 24"><use href="#spark"/></svg></i>
+          <span data-key="menu_chip">دورك جاهز! توجّه إلى الاستقبال</span>
+        </div>
+        <div class="phone">
+          <div class="phone-screen">
+            <div class="phone-bar"><span>9:41</span><span>&#9679;&#9679;&#9679;</span></div>
+            <div class="q-bar">
+              <div class="q-txt">
+                <b data-key="menu_q1">أمامك 3 ضيوف</b>
+                <span data-key="menu_q2">انتظار متوقع ~12 دقيقة</span>
+              </div>
+              <span class="q-code">Q-0593</span>
+            </div>
+            <h4 data-key="menu_ph_t">تصفّح القائمة</h4>
+            <p class="sub" style="margin-bottom:6px" data-key="menu_ph_sub">اختر طبقك وأنت تنتظر، وسننبّهك هنا فور جاهزية طاولتك.</p>
+            <div class="m-tabs">
+              <span class="m-tab on" data-key="menu_c1">المشويات</span>
+              <span class="m-tab" data-key="menu_c2">المقبلات</span>
+              <span class="m-tab" data-key="menu_c3">الحلويات</span>
+              <span class="m-tab" data-key="menu_c4">المشروبات</span>
+            </div>
+            <div class="m-item">
+              <span class="m-img a"></span>
+              <div class="m-body"><div class="m-name" data-key="menu_i1">مندي لحم</div><div class="m-meta" data-key="menu_i1m">920 سعرة حرارية</div></div>
+              <span class="m-price" data-key="menu_i1p">68 ر.س</span>
+            </div>
+            <div class="m-item">
+              <span class="m-img b"></span>
+              <div class="m-body"><div class="m-name" data-key="menu_i2">شيش طاووق</div><div class="m-meta" data-key="menu_i2m">610 سعرة حرارية</div></div>
+              <span class="m-price" data-key="menu_i2p">42 ر.س</span>
+            </div>
+            <div class="m-item off">
+              <span class="m-img c"></span>
+              <div class="m-body"><div class="m-name" data-key="menu_i3">كفتة مشوية</div><div class="m-meta" data-key="menu_i3m">540 سعرة حرارية</div></div>
+              <span class="m-off" data-key="menu_i3p">نفد اليوم</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="rv">
+        <span class="eyebrow" data-key="menu_eyebrow">القائمة الرقمية</span>
+        <h2 class="h-lg" data-key="menu_h2">ضيفك يختار طبقه وهو ينتظر</h2>
+        <p class="lead" data-key="menu_p">بعد انضمامه إلى الطابور، يتصفّح الضيف قائمة مطعمك من نفس الصفحة، ودوره ظاهر أمامه طوال الوقت. وعندما تجهز طاولته يصله التنبيه فورًا، ويصل إليها وقد عرف ماذا سيطلب.</p>
+        <ul class="ticks">
+          <li><span class="tick">&#10003;</span><span data-key="menu_t1">قائمة بالعربية والإنجليزية مع الصور والأسعار والسعرات الحرارية</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="menu_t2">دور الضيف والوقت المتوقع ظاهران أعلى الصفحة أثناء التصفح</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="menu_t3">زر «نفد اليوم» في لوحة الطاقم يُحدّث القائمة فورًا</span></li>
+          <li><span class="tick">&#10003;</span><span data-key="menu_t4">طلب أسرع على الطاولة، ودوران أسرع للطاولات</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═══ REGISTRATION CONTROL ═══ -->
 <section class="section" id="control" style="background:linear-gradient(180deg,var(--navy),#0F2030)">
   <div class="container">
@@ -759,6 +851,7 @@
         <a href="#how" data-key="footer_how">كيف يعمل</a>
         <a href="#dashboard" data-key="footer_dash">لوحة التحكم</a>
         <a href="#reports" data-key="footer_reports">التقارير</a>
+        <a href="#menu" data-key="footer_menu">القائمة الرقمية</a>
         <a href="#features" data-key="footer_feat">المميزات</a>
         <a href="mailto:admin@cloudqueq.com" data-key="footer_contact">تواصل معنا</a>
       </nav>
@@ -835,6 +928,21 @@
       ctrl2_t:'تحكم يدوي فوري', ctrl2_p:'أوقف استقبال التسجيلات أو أعد فتحه من لوحة التحكم في أي وقت.',
       ctrl3_t:'السعة اليومية', ctrl3_p:'حدّد العدد الأقصى للضيوف، ويتوقف التسجيل تلقائيًا عند بلوغه.',
       ctrl4_t:'تصميم واجهة الضيف', ctrl4_p:'عدّل شكل صفحة التسجيل التي يراها ضيفك لتناسب هوية مطعمك.',
+
+      menu_eyebrow:'القائمة الرقمية', menu_h2:'ضيفك يختار طبقه وهو ينتظر',
+      menu_p:'بعد انضمامه إلى الطابور، يتصفّح الضيف قائمة مطعمك من نفس الصفحة، ودوره ظاهر أمامه طوال الوقت. وعندما تجهز طاولته يصله التنبيه فورًا، ويصل إليها وقد عرف ماذا سيطلب.',
+      menu_t1:'قائمة بالعربية والإنجليزية مع الصور والأسعار والسعرات الحرارية',
+      menu_t2:'دور الضيف والوقت المتوقع ظاهران أعلى الصفحة أثناء التصفح',
+      menu_t3:'زر «نفد اليوم» في لوحة الطاقم يُحدّث القائمة فورًا',
+      menu_t4:'طلب أسرع على الطاولة، ودوران أسرع للطاولات',
+      menu_chip:'دورك جاهز! توجّه إلى الاستقبال',
+      menu_q1:'أمامك 3 ضيوف', menu_q2:'انتظار متوقع ~12 دقيقة',
+      menu_ph_t:'تصفّح القائمة', menu_ph_sub:'اختر طبقك وأنت تنتظر، وسننبّهك هنا فور جاهزية طاولتك.',
+      menu_c1:'المشويات', menu_c2:'المقبلات', menu_c3:'الحلويات', menu_c4:'المشروبات',
+      menu_i1:'مندي لحم', menu_i1m:'920 سعرة حرارية', menu_i1p:'68 ر.س',
+      menu_i2:'شيش طاووق', menu_i2m:'610 سعرة حرارية', menu_i2p:'42 ر.س',
+      menu_i3:'كفتة مشوية', menu_i3m:'540 سعرة حرارية', menu_i3p:'نفد اليوم',
+      nav_menu:'القائمة الرقمية', footer_menu:'القائمة الرقمية',
 
       feat_eyebrow:'المميزات', feat_h2:'كل ما يحتاجه مطعمك لإدارة طابور أذكى',
       feat_p:'مصمّم لفرق الاستقبال المشغولة: بلا تدريب طويل، وبلا أي تعقيد على الضيف.',
@@ -918,6 +1026,21 @@
       ctrl2_t:'Instant manual control', ctrl2_p:'Stop accepting new entries or reopen registration from the dashboard at any time.',
       ctrl3_t:'Daily capacity', ctrl3_p:'Set a maximum number of guests, and registration stops automatically once it is reached.',
       ctrl4_t:'Customisable guest page', ctrl4_p:'Adjust how the join page your guest sees looks, so it fits your restaurant.',
+
+      menu_eyebrow:'Digital menu', menu_h2:'Guests pick their dish while they wait',
+      menu_p:'Once they join the queue, guests browse your menu on the same page, with their place in line always in view. When their table is ready the alert pops up instantly, and they sit down already knowing what to order.',
+      menu_t1:'Arabic and English menu with photos, prices and calories',
+      menu_t2:'Queue position and estimated wait stay pinned at the top while browsing',
+      menu_t3:'A “sold out today” switch on the staff dashboard updates the menu instantly',
+      menu_t4:'Faster ordering at the table, faster table turnover',
+      menu_chip:'Your table is ready! Head to the host stand',
+      menu_q1:'3 guests ahead of you', menu_q2:'About 12 min wait',
+      menu_ph_t:'Browse the menu', menu_ph_sub:'Pick your dish while you wait. We will alert you right here when your table is ready.',
+      menu_c1:'Grills', menu_c2:'Starters', menu_c3:'Desserts', menu_c4:'Drinks',
+      menu_i1:'Lamb mandi', menu_i1m:'920 kcal', menu_i1p:'SAR 68',
+      menu_i2:'Shish tawook', menu_i2m:'610 kcal', menu_i2p:'SAR 42',
+      menu_i3:'Grilled kofta', menu_i3m:'540 kcal', menu_i3p:'Sold out today',
+      nav_menu:'Digital menu', footer_menu:'Digital menu',
 
       feat_eyebrow:'Features', feat_h2:'Everything your restaurant needs to run a smarter queue',
       feat_p:'Built for busy front-of-house teams: no long training, and no friction for the guest.',
